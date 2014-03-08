@@ -1,0 +1,32 @@
+# Prefix for source code folders
+SRCPREFIX = src
+
+# Folder containing Java files for Canopy Center step
+CANOPYCENTERDIR = CanopyCenter
+
+# Folder containing Java files for Canopy Assign step
+CANOPYASSIGNDIR = CanopyAssign
+
+# Folder containing Java files for Cluster Center step
+CLUSTERCENTERDIR = ClusterCenter
+
+# Folder containing Java files for Cluster Assign step
+CLUSTERASSIGNDIR = ClusterAssign
+
+# Folder containing Java file for the Data Point
+DATAPOINTDIR = DataPoint
+
+# Data Point Java file in the Data Point Folder
+DATAPOINTFILE = TemperatureDataPoint.java
+
+# Name of the JAR file to be created
+JARFILE = TempJob.jar
+
+# Path in HDFS where input and output folders will be created
+BASEFOLDER = /tmp/maxT
+
+# Name of file in HDFS containing the dataset
+DATASETFILE = 1.txt
+
+# Name of file in HDFS containing the k-Means Centroids
+CENTROIDSFILE = centroids.txt
