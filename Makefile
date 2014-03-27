@@ -145,4 +145,4 @@ clean:
 	if test -f $(SRCPREFIX)/$(DIR4)/*.class; then rm $(SRCPREFIX)/$(DIR4)/*.class; fi
 	if test -f $(SRCPREFIX)/$(DATAPOINTDIR)/*.class; then rm $(SRCPREFIX)/$(DATAPOINTDIR)/*.class; fi
 	if test -d bin; then rm -r bin/; fi
-	if test -f $(OUTPUTJARNAME); then rm $(OUTPUTJARNAME); fi
+	if test -f *.jar; then rm *.jar; fi

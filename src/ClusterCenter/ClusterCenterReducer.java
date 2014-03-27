@@ -13,6 +13,10 @@ import DataPoint.TemperatureDataPoint;
 public class ClusterCenterReducer extends Reducer<TemperatureDataPoint, TemperatureDataPoint, IntWritable, TemperatureDataPoint>
 {
 	/**
+	 * Output key for the k-Means Centroid
+	 */
+	public static int CENTROID_KEY = 1;
+	/**
 	  * Overridden reduce method of the Reduce class
 	  * Parameters:	TemperatureDataPoint key, a Canopy Center
 	  * 			Iterable<TemperatureDataPoint> value, A list of Data Points associated to this Canopy Center
@@ -33,6 +37,9 @@ public class ClusterCenterReducer extends Reducer<TemperatureDataPoint, Temperat
 	{
 		// Find average Data Point and output it
 		TemperatureDataPoint dataPoint = TemperatureDataPoint.getAverageDataPoint(values);
-		context.write(new IntWritable(1), dataPoint);
+		context.write(new IntWritable(ClusterCenterReducer.CENTROID_KEY), dataPoint);
+
+		// Increment the centroid key
+		ClusterCenterReducer.CENTROID_KEY++;
 	}
 }

@@ -27,7 +27,7 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	/**
 	  * Threshold for convergence. A distance value below the specified value denotes the point has converged.
 	  */
-	public final static double CONVERGENCE_THRESHOLD = 2.0;
+	public final static double CONVERGENCE_THRESHOLD = 1.0;
 
 	/**
 	 * The number of iterations so far.

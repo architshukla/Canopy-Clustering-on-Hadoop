@@ -32,11 +32,6 @@ public class ClusterCenterDriver
 	public static ArrayList<TemperatureDataPoint> oldKCentroids, newKCentroids;
 
 	/**
-	  * Number of iterations completed so far. Used for naming output folders.
-	  */
-	public static int iteration = 0;
-
-	/**
 	  * Name of the output part file.
 	  */
 	public static final String partFile = "/part-r-00000";
@@ -67,7 +62,7 @@ public class ClusterCenterDriver
 		FileSystem filesystem = FileSystem.get(configuration);
 
 		// Read the Old k-Means Centroid File
-		if(iteration == 0)
+		if(TemperatureDataPoint.NUM_ITERATIONS == 0)
 		{
 			// If this is the first iteration, the centroids lie in the k-Means Centroid input file
 			BufferedReader oldReader = new BufferedReader(new InputStreamReader(filesystem.open
@@ -89,8 +84,9 @@ public class ClusterCenterDriver
 			line = oldReader.readLine();
 			while(line != null)
 			{
-				// Since the output is a (key, value) pair, the first character 1, and the second character \t are ignored
-				oldKCentroids.add(new TemperatureDataPoint(line.substring(2)));
+				// Since the output is a (key, value) pair, the key is ignored
+				int tabPosition = line.indexOf("\t");
+				oldKCentroids.add(new TemperatureDataPoint(line.substring(tabPosition + 1)));
 				line = oldReader.readLine();
 			}
 		}
@@ -101,8 +97,9 @@ public class ClusterCenterDriver
 		line = newReader.readLine();
 		while(line != null)
 		{
-			// Since the file contains a (key, value) pair, the first character 1, and the second character \t are ignored
-			newKCentroids.add(new TemperatureDataPoint(line.substring(2)));
+			// Since the file contains a (key, value) pair, the key is ignored
+			int tabPosition = line.indexOf("\t");
+			newKCentroids.add(new TemperatureDataPoint(line.substring(tabPosition + 1)));
 			line = newReader.readLine();
 		}
 
@@ -130,7 +127,7 @@ public class ClusterCenterDriver
 		FileSystem filesystem = FileSystem.get(configuration);
 
 		// Use the copy method of FileUtil to copy the final k-Means Centroid file to a known output file
-		FileUtil.copy(filesystem, new Path(configuration.get("fs.default.name") + outputFolderName + "_" + (iteration-1)), filesystem, 
+		FileUtil.copy(filesystem, new Path(configuration.get("fs.default.name") + outputFolderName + "_" + (TemperatureDataPoint.NUM_ITERATIONS-1)), filesystem, 
 			new Path(configuration.get("fs.default.name") + outputFolderName), false, true, configuration);
 	}
 
@@ -153,12 +150,12 @@ public class ClusterCenterDriver
 			// Add parameter to the configuration - Path to Cluster Centers and k Centroid files
 			Configuration configuration = new Configuration();
 			configuration.set("canopyCentersFile", args[1]);
-			if(iteration == 0)
+			if(TemperatureDataPoint.NUM_ITERATIONS == 0)
 				configuration.set("kCentroidsFile", args[2]);
 			else
-				configuration.set("kCentroidsFile", args[3] + "_" + (iteration-1) + partFile);
+				configuration.set("kCentroidsFile", args[3] + "_" + (TemperatureDataPoint.NUM_ITERATIONS-1) + partFile);
 
-			System.out.println("Iteration: " + iteration);
+			System.out.println("Iteration: " + TemperatureDataPoint.NUM_ITERATIONS);
 
 			// Set up the job with the configuration defined above
 			Job job = new Job(configuration);
@@ -167,7 +164,7 @@ public class ClusterCenterDriver
 		
 			// Set paths for input and output files
 			FileInputFormat.setInputPaths(job, new Path(args[0]));
-			FileOutputFormat.setOutputPath(job, new Path(args[3] + "_" + iteration));
+			FileOutputFormat.setOutputPath(job, new Path(args[3] + "_" + TemperatureDataPoint.NUM_ITERATIONS));
 		
 			// Set the Mapper and Reducer class
 			job.setMapperClass(ClusterCenterMapper.class);
@@ -184,18 +181,18 @@ public class ClusterCenterDriver
 			job.waitForCompletion(true);
 
 			// Check if the k-Means Centroids have converged
-			if(iteration == 0)
+			if(TemperatureDataPoint.NUM_ITERATIONS == 0)
 			{
-				if(hasConverged(args[2], args[3] + "_" + iteration))
+				if(hasConverged(args[2], args[3] + "_" + TemperatureDataPoint.NUM_ITERATIONS))
 					break;
 			}
 			else
 			{
-				if(hasConverged(args[3] + "_" + (iteration - 1), args[3] + "_" + iteration))
+				if(hasConverged(args[3] + "_" + (TemperatureDataPoint.NUM_ITERATIONS - 1), args[3] + "_" + TemperatureDataPoint.NUM_ITERATIONS))
 					break;
 			}
 
-			iteration++;
+			TemperatureDataPoint.NUM_ITERATIONS++;
 		}
 
 		// Copy the final k-Means Centroids File to a fixed location
