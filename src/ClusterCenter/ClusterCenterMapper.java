@@ -70,8 +70,8 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		line = canopyReader.readLine();
 		while(line != null)
 		{
-			// The first character is 1, the second is \t, All the other characters are parsed to an object of TemperatureDataPoint
-			TemperatureDataPoint canopyCenter =  new TemperatureDataPoint(line.substring(2));
+			int tabPosition = line.indexOf("\t");
+			TemperatureDataPoint canopyCenter =  new TemperatureDataPoint(line.substring(tabPosition + 1));
 			canopyCenters.add(canopyCenter);
 			line = canopyReader.readLine();
 		}

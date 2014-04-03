@@ -3,28 +3,30 @@
 #############
 
 # Prefix for source code folders
-SRCPREFIX=$(shell grep 'SRCPREFIX' config | awk '{ print $$3 }')
+SRCPREFIX=$(shell grep 'SRCPREFIX' cc.properties | awk '{ print $$3 }')
+
+# Folders
+SRC=src
+BIN=bin
+DIST=dist
 
 # Directory names for the steps for MapReduce implementation of Canopy Clustering
-DIR1=$(shell grep 'CANOPYCENTERDIR' config | awk '{ print $$3 }')
-DIR2=$(shell grep 'CANOPYASSIGNDIR' config | awk '{ print $$3 }')
-DIR3=$(shell grep 'CLUSTERCENTERDIR' config | awk '{ print $$3 }')
-DIR4=$(shell grep 'CLUSTERASSIGNDIR' config | awk '{ print $$3 }')
+DIR1=$(shell grep 'CANOPYCENTERDIR' cc.properties | awk '{ print $$3 }')
+DIR2=$(shell grep 'CANOPYASSIGNDIR' cc.properties | awk '{ print $$3 }')
+DIR3=$(shell grep 'CLUSTERCENTERDIR' cc.properties | awk '{ print $$3 }')
+DIR4=$(shell grep 'CLUSTERASSIGNDIR' cc.properties | awk '{ print $$3 }')
 
 # Name of the Directory holding the DataPoint class
-DATAPOINTDIR=$(shell grep 'DATAPOINTDIR' config | awk '{ print $$3 }')
+DATAPOINTDIR=$(shell grep 'DATAPOINTDIR' cc.properties | awk '{ print $$3 }')
 
 # Name of java file holding the class modeling a data point/element in the data set
-DATAPOINTCLASS=$(shell grep 'DATAPOINTFILE' config | awk '{ print $$3 }')
+DATAPOINTCLASS=$(shell grep 'DATAPOINTFILE' cc.properties | awk '{ print $$3 }')
 
 # Name of output jar file
-OUTPUTJARNAME=$(shell grep 'JARFILE' config | awk '{ print $$3 }')
+OUTPUTJARNAME=$(shell grep 'JARFILE' cc.properties | awk '{ print $$3 }')
 
 # Name of hadoop core jar file, the HADOOP_HOME environment variable must be set to your
 HADOOPCOREJAR=hadoop-core-*.jar
-
-# Current Working Directory
-CWD=$(shell pwd)
 
 #########
 # Rules #
@@ -32,19 +34,20 @@ CWD=$(shell pwd)
 
 # Build all steps
 all: step1 step2 step3 step4
-	mkdir -p bin/
-	mkdir -p bin/$(DIR1)/
-	mkdir -p bin/$(DIR2)/
-	mkdir -p bin/$(DIR3)/
-	mkdir -p bin/$(DIR4)/
-	mkdir -p bin/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR1)/*.class bin/$(DIR1)/
-	mv $(SRCPREFIX)/$(DIR2)/*.class bin/$(DIR2)/
-	mv $(SRCPREFIX)/$(DIR3)/*.class bin/$(DIR3)/
-	mv $(SRCPREFIX)/$(DIR4)/*.class bin/$(DIR4)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class bin/$(DATAPOINTDIR)/
-	jar -cvf $(OUTPUTJARNAME) -C bin/ .
-	rm -r bin/
+	mkdir -p $(BIN)
+	mkdir -p $(BIN)/$(DIR1)/
+	mkdir -p $(BIN)/$(DIR2)/
+	mkdir -p $(BIN)/$(DIR3)/
+	mkdir -p $(BIN)/$(DIR4)/
+	mkdir -p $(BIN)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR1)/*.class $(BIN)/$(DIR1)/
+	mv $(SRCPREFIX)/$(DIR2)/*.class $(BIN)/$(DIR2)/
+	mv $(SRCPREFIX)/$(DIR3)/*.class $(BIN)/$(DIR3)/
+	mv $(SRCPREFIX)/$(DIR4)/*.class $(BIN)/$(DIR4)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	jar -cvf $(OUTPUTJARNAME) -C $(BIN) .
+	mkdir -p $(DIST)
+	mv $(OUTPUTJARNAME) $(DIST)
 
 # Compile step 1 files
 step1:	$(SRCPREFIX)/$(DIR1)/$(DIR1)Driver.java \
@@ -98,51 +101,51 @@ step4:	$(SRCPREFIX)/$(DIR4)/$(DIR4)Driver.java \
 # Rules to build a particular step
 # Build only step 1
 canopycenter: step1
-	mkdir -p bin/
-	mkdir -p bin/$(DIR1)/
-	mkdir -p bin/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR1)/*.class bin/$(DIR1)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class bin/$(DATAPOINTDIR)/
-	jar -cvf $(OUTPUTJARNAME) -C bin/ .
-	rm -r bin/
+	mkdir -p $(BIN)/
+	mkdir -p $(BIN)/$(DIR1)/
+	mkdir -p $(BIN)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR1)/*.class $(BIN)/$(DIR1)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	jar -cvf $(OUTPUTJARNAME) -C $(BIN)/ .
+	rm -r $(BIN)/
 
 # Build only step 2
 canopyassign: step2
-	mkdir -p bin/
-	mkdir -p bin/$(DIR2)/
-	mkdir -p bin/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR2)/*.class bin/$(DIR2)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class bin/$(DATAPOINTDIR)/
-	jar -cvf $(OUTPUTJARNAME) -C bin/ .
-	rm -r bin/
+	mkdir -p $(BIN)/
+	mkdir -p $(BIN)/$(DIR2)/
+	mkdir -p $(BIN)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR2)/*.class $(BIN)/$(DIR2)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	jar -cvf $(OUTPUTJARNAME) -C $(BIN)/ .
+	rm -r $(BIN)/
 
 # Build only step 3
 clustercenter: step3
-	mkdir -p bin/
-	mkdir -p bin/$(DIR3)/
-	mkdir -p bin/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR3)/*.class bin/$(DIR3)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class bin/$(DATAPOINTDIR)/
-	jar -cvf $(OUTPUTJARNAME) -C bin/ .
-	rm -r bin/
+	mkdir -p $(BIN)/
+	mkdir -p $(BIN)/$(DIR3)/
+	mkdir -p $(BIN)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR3)/*.class $(BIN)/$(DIR3)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	jar -cvf $(OUTPUTJARNAME) -C $(BIN)/ .
+	rm -r $(BIN)/
 
 # Build only step 4
 clusterassign: step4
-	mkdir -p bin/
-	mkdir -p bin/$(DIR4)/
-	mkdir -p bin/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR4)/*.class bin/$(DIR4)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class bin/$(DATAPOINTDIR)/
-	jar -cvf $(OUTPUTJARNAME) -C bin/ .
-	rm -r bin/
+	mkdir -p $(BIN)/
+	mkdir -p $(BIN)/$(DIR4)/
+	mkdir -p $(BIN)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR4)/*.class $(BIN)/$(DIR4)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	jar -cvf $(OUTPUTJARNAME) -C $(BIN)/ .
+	rm -r $(BIN)/
 
 
-# Remove bin/ and .jar files
+# Remove $(BIN)/ and .jar files
 clean:
 	if test -f $(SRCPREFIX)/$(DIR1)/*.class; then rm $(SRCPREFIX)/$(DIR1)/*.class; fi
 	if test -f $(SRCPREFIX)/$(DIR2)/*.class; then rm $(SRCPREFIX)/$(DIR2)/*.class; fi
 	if test -f $(SRCPREFIX)/$(DIR3)/*.class; then rm $(SRCPREFIX)/$(DIR3)/*.class; fi
 	if test -f $(SRCPREFIX)/$(DIR4)/*.class; then rm $(SRCPREFIX)/$(DIR4)/*.class; fi
 	if test -f $(SRCPREFIX)/$(DATAPOINTDIR)/*.class; then rm $(SRCPREFIX)/$(DATAPOINTDIR)/*.class; fi
-	if test -d bin; then rm -r bin/; fi
-	if test -f *.jar; then rm *.jar; fi
+	if test -d $(BIN); then rm -r $(BIN); fi
+	if test -d $(DIST); then rm -r $(DIST); fi

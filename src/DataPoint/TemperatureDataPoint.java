@@ -126,7 +126,8 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public int compareTo(TemperatureDataPoint dataPoint)
 	{
-		return (temperature < dataPoint.temperature? -1 : (temperature == dataPoint.temperature ? 0 : 1));
+		return (temperature < dataPoint.temperature ? -1 : 
+			(temperature == dataPoint.temperature ? (year < dataPoint.year ? -1 : (year == dataPoint.year ? 0 : 1)) : 1));
 	}
 
 	/**

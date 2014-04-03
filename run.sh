@@ -1,16 +1,16 @@
 #! /usr/bin/env bash
 
 # Base folder for input and output files in HDFS
-export BASEFOLDER=`grep 'BASEFOLDER' config | awk '{ print $3 }'`
+export BASEFOLDER=`grep 'BASEFOLDER' cc.properties | awk '{ print $3 }'`
 
 # Name of the JAR file to be run
-export JARFILE=`grep 'JARFILE' config | awk '{ print $3 }'`
+export JARFILE=dist/`grep 'JARFILE' cc.properties | awk '{ print $3 }'`
 
 # Input Data Set
-export DATASET=$BASEFOLDER/input/`grep 'DATASETFILE' config | awk '{ print $3 }'`
+export DATASET=$BASEFOLDER/input/`grep 'DATASETFILE' cc.properties | awk '{ print $3 }'`
 
 # Inital file containing k-Means Centroids
-export KCENTROIDSFILE=$BASEFOLDER/input/`grep 'CENTROIDSFILE' config | awk '{ print $3 }'`
+export KCENTROIDSFILE=$BASEFOLDER/input/`grep 'CENTROIDSFILE' cc.properties | awk '{ print $3 }'`
 
 export CANOPYCENTERSFOLDER=$BASEFOLDER/output1
 export CANOPYASSIGNFOLDER=$BASEFOLDER/output2
@@ -27,16 +27,16 @@ hadoop dfs -rmr $BASEFOLDER/output*
 
 # CanopyCenter 
 # Parameters: <Data Set> <Output Folder>
-hadoop jar $JARFILE `grep 'CANOPYCENTERDIR' config | awk '{ print $3 }'`.CanopyCenterDriver $DATASET $CANOPYCENTERSFOLDER
+hadoop jar $JARFILE `grep 'CANOPYCENTERDIR' cc.properties | awk '{ print $3 }'`.CanopyCenterDriver $DATASET $CANOPYCENTERSFOLDER
 
 # CanopyAssign
 # Parameters: <Data Set> <Canopy Centers File> <Output Folder>
-hadoop jar $JARFILE `grep 'CANOPYASSIGNDIR' config | awk '{ print $3 }'`.CanopyAssignDriver $DATASET $CANOPYCENTERSFILE $CANOPYASSIGNFOLDER
+hadoop jar $JARFILE `grep 'CANOPYASSIGNDIR' cc.properties | awk '{ print $3 }'`.CanopyAssignDriver $DATASET $CANOPYCENTERSFILE $CANOPYASSIGNFOLDER
 
 # ClusterCenter
 # Parameters: <Canopy Assign File> <Canopy Centers File> <k-Means Centroids File> <Output Folder>
-hadoop jar $JARFILE `grep 'CLUSTERCENTERDIR' config | awk '{ print $3 }'`.ClusterCenterDriver $CANOPYASSIGNFILE $CANOPYCENTERSFILE $KCENTROIDSFILE $CLUSTERCENTERFOLDER
+hadoop jar $JARFILE `grep 'CLUSTERCENTERDIR' cc.properties | awk '{ print $3 }'`.ClusterCenterDriver $CANOPYASSIGNFILE $CANOPYCENTERSFILE $KCENTROIDSFILE $CLUSTERCENTERFOLDER
 
 # ClusterAssign
 # Parameters: <Data Set> <k-Means Centroids File> <Output File>
-hadoop jar $JARFILE `grep 'CLUSTERASSIGNDIR' config | awk '{ print $3 }'`.ClusterAssignDriver $DATASET $CLUSTERCENTERFILE $CLUSTERASSIGNFOLDER
+hadoop jar $JARFILE `grep 'CLUSTERASSIGNDIR' cc.properties | awk '{ print $3 }'`.ClusterAssignDriver $DATASET $CLUSTERCENTERFILE $CLUSTERASSIGNFOLDER
