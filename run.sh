@@ -35,7 +35,7 @@ hadoop jar $JARFILE `grep 'CANOPYASSIGNDIR' cc.properties | awk '{ print $3 }'`.
 
 # ClusterCenter
 # Parameters: <Canopy Assign File> <Canopy Centers File> <k-Means Centroids File> <Output Folder>
-hadoop jar $JARFILE `grep 'CLUSTERCENTERDIR' cc.properties | awk '{ print $3 }'`.ClusterCenterDriver $CANOPYASSIGNFILE $CANOPYCENTERSFILE $KCENTROIDSFILE $CLUSTERCENTERFOLDER
+time hadoop jar $JARFILE `grep 'CLUSTERCENTERDIR' cc.properties | awk '{ print $3 }'`.ClusterCenterDriver $CANOPYASSIGNFILE $CANOPYCENTERSFILE $KCENTROIDSFILE $CLUSTERCENTERFOLDER
 
 # ClusterAssign
 # Parameters: <Data Set> <k-Means Centroids File> <Output File>

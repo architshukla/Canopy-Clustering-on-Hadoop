@@ -29,7 +29,7 @@ public class ClusterAssignDriver
 		// args[2] = Path to output file
 		if(args.length != 3)
 		{
-			System.out.println("Usage: ClusterAssignDriver <input path> <output path>");
+			System.out.println("Usage: ClusterAssignDriver <input path> <k-Centroids file> <output path>");
 			System.exit(-1);
 		}
 

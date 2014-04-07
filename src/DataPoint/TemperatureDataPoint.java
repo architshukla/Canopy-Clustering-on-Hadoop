@@ -23,7 +23,7 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	/**
 	  * T1 and T2 thresholds for this Data Set.
 	  */
-	public final static double T1 = 10, T2 = 5;
+	public final static double T1 = 10, T2 = 6;
 	/**
 	  * Threshold for convergence. A distance value below the specified value denotes the point has converged.
 	  */
