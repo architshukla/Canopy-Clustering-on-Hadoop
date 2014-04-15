@@ -154,6 +154,7 @@ public class ClusterCenterDriver
 				configuration.set("kCentroidsFile", args[2]);
 			else
 				configuration.set("kCentroidsFile", args[3] + "_" + (TemperatureDataPoint.NUM_ITERATIONS-1) + partFile);
+			configuration.set("NUM_ITERATIONS",TemperatureDataPoint.NUM_ITERATIONS + "");
 
 			System.out.println("Iteration: " + TemperatureDataPoint.NUM_ITERATIONS);
 

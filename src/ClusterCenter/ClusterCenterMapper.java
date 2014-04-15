@@ -49,6 +49,8 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		// Get the context's configuration
 		Configuration configuration = context.getConfiguration();
 
+		int NUM_ITERATIONS = Integer.parseInt(configuration.get("NUM_ITERATIONS"));
+
 		// Get a handle of the HDFS
 		FileSystem filesystem = FileSystem.get(configuration);
 		
@@ -58,8 +60,14 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		String line = centroidReader.readLine();
 		while(line != null)
 		{
-			// The first character is 1, the second is \t, All the other characters are parsed to an object of TemperatureDataPoint
-			TemperatureDataPoint kCentroid =  new TemperatureDataPoint(line.substring(2));
+			TemperatureDataPoint kCentroid = null;
+			if(NUM_ITERATIONS == 0)
+				kCentroid =  new TemperatureDataPoint(line);
+			else
+			{
+				int tabPosition = line.indexOf("\t");
+				kCentroid =  new TemperatureDataPoint(line.substring(tabPosition + 1));
+			}
 			kCentroids.add(kCentroid);
 			line = centroidReader.readLine();
 		}
