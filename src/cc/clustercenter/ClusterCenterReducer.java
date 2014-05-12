@@ -1,16 +1,16 @@
-package ClusterCenter;
+package cc.clustercenter;
 
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Reducer class for the Cluster Center iteration step.
   */
-public class ClusterCenterReducer extends Reducer<TemperatureDataPoint, TemperatureDataPoint, IntWritable, TemperatureDataPoint>
+public class ClusterCenterReducer extends Reducer<DataPoint, DataPoint, IntWritable, DataPoint>
 {
 	/**
 	 * Output key for the k-Means Centroid
@@ -18,8 +18,8 @@ public class ClusterCenterReducer extends Reducer<TemperatureDataPoint, Temperat
 	public static int CENTROID_KEY = 1;
 	/**
 	  * Overridden reduce method of the Reduce class
-	  * Parameters:	TemperatureDataPoint key, a Canopy Center
-	  * 			Iterable<TemperatureDataPoint> value, A list of Data Points associated to this Canopy Center
+	  * Parameters:	DataPoint key, a Canopy Center
+	  * 			Iterable<DataPoint> value, A list of Data Points associated to this Canopy Center
 	  *				Context context
 	  * Returns:	(key, value) pairs where
 	  *				key is a k-Means Cluster Centroid
@@ -32,11 +32,11 @@ public class ClusterCenterReducer extends Reducer<TemperatureDataPoint, Temperat
 	  * It outputs the pair (1, New Cluster Centroid, that is Average of all Data Points)
 	  */
 	@Override
-	public void reduce(TemperatureDataPoint key, Iterable<TemperatureDataPoint> values, Context context)
+	public void reduce(DataPoint key, Iterable<DataPoint> values, Context context)
 		throws IOException, InterruptedException
 	{
 		// Find average Data Point and output it
-		TemperatureDataPoint dataPoint = TemperatureDataPoint.getAverageDataPoint(values);
+		DataPoint dataPoint = DataPoint.getAverageDataPoint(values);
 		context.write(new IntWritable(ClusterCenterReducer.CENTROID_KEY), dataPoint);
 
 		// Increment the centroid key

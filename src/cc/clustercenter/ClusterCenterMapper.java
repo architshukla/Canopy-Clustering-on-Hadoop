@@ -1,4 +1,4 @@
-package ClusterCenter;
+package cc.clustercenter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,17 +13,17 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Mapper class for the Cluster Center iteration step.
   */
-public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureDataPoint, TemperatureDataPoint>
+public class ClusterCenterMapper extends Mapper<LongWritable, Text, DataPoint, DataPoint>
 {
 	/**
 	  * HashMap with keys as Canopy Centers and values as a list of k-Means Centroids associated in this Canopy.
 	  */
-	HashMap<TemperatureDataPoint, ArrayList<TemperatureDataPoint>> canopyCenterKCentroidsMap;
+	HashMap<DataPoint, ArrayList<DataPoint>> canopyCenterKCentroidsMap;
 
 	/**
 	  * Overridden setup method of Mapper class.
@@ -42,9 +42,9 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		super.setup(context);
 
 		// Allocate memory for kCentroids, canopyCenters and the HashMap
-		ArrayList<TemperatureDataPoint> kCentroids = new ArrayList<TemperatureDataPoint>();
-		ArrayList<TemperatureDataPoint> canopyCenters = new ArrayList<TemperatureDataPoint>();
-		canopyCenterKCentroidsMap = new HashMap<TemperatureDataPoint, ArrayList<TemperatureDataPoint>>();
+		ArrayList<DataPoint> kCentroids = new ArrayList<DataPoint>();
+		ArrayList<DataPoint> canopyCenters = new ArrayList<DataPoint>();
+		canopyCenterKCentroidsMap = new HashMap<DataPoint, ArrayList<DataPoint>>();
 
 		// Get the context's configuration
 		Configuration configuration = context.getConfiguration();
@@ -60,13 +60,13 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		String line = centroidReader.readLine();
 		while(line != null)
 		{
-			TemperatureDataPoint kCentroid = null;
+			DataPoint kCentroid = null;
 			if(NUM_ITERATIONS == 0)
-				kCentroid =  new TemperatureDataPoint(line);
+				kCentroid =  new DataPoint(line);
 			else
 			{
 				int tabPosition = line.indexOf("\t");
-				kCentroid =  new TemperatureDataPoint(line.substring(tabPosition + 1));
+				kCentroid =  new DataPoint(line.substring(tabPosition + 1));
 			}
 			kCentroids.add(kCentroid);
 			line = centroidReader.readLine();
@@ -79,18 +79,18 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 		while(line != null)
 		{
 			int tabPosition = line.indexOf("\t");
-			TemperatureDataPoint canopyCenter =  new TemperatureDataPoint(line.substring(tabPosition + 1));
+			DataPoint canopyCenter =  new DataPoint(line.substring(tabPosition + 1));
 			canopyCenters.add(canopyCenter);
 			line = canopyReader.readLine();
 		}
 
 		// Set up the HashMap
-		for(TemperatureDataPoint canopyCenter : canopyCenters)
+		for(DataPoint canopyCenter : canopyCenters)
 		{
 			// For each Canopy Center, create an ArrayList of all Data Points within this Canopy
-			ArrayList<TemperatureDataPoint> centroidList = new ArrayList<TemperatureDataPoint>();
+			ArrayList<DataPoint> centroidList = new ArrayList<DataPoint>();
 
-			for(TemperatureDataPoint kCentroid : kCentroids)
+			for(DataPoint kCentroid : kCentroids)
 			{
 				// If a k-Means Centroid is within this Canopy, add it to the ArrayList
 				if(canopyCenter.withinT1(kCentroid))
@@ -126,11 +126,11 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 
 		// Parse the value to get Canopy Center and Data Point
 		int tabPosition = keyValueString.indexOf("\t");
-		TemperatureDataPoint canopyCenter = new TemperatureDataPoint(keyValueString.substring(0, tabPosition));
-		TemperatureDataPoint dataPoint = new TemperatureDataPoint(keyValueString.substring(tabPosition + 1));
+		DataPoint canopyCenter = new DataPoint(keyValueString.substring(0, tabPosition));
+		DataPoint dataPoint = new DataPoint(keyValueString.substring(tabPosition + 1));
 
 		// Get the list of k-Means Centroids in this Canopy
-		ArrayList<TemperatureDataPoint> centroids = canopyCenterKCentroidsMap.get(canopyCenter);
+		ArrayList<DataPoint> centroids = canopyCenterKCentroidsMap.get(canopyCenter);
 		if(centroids != null)
 		{
 			// Set the minimum distance to the maximum value a double can hold and create
@@ -139,7 +139,7 @@ public class ClusterCenterMapper extends Mapper<LongWritable, Text, TemperatureD
 
 			for(int i = 0; i < centroids.size(); i++)
 			{
-				TemperatureDataPoint centroid = centroids.get(i);
+				DataPoint centroid = centroids.get(i);
 				double distance = dataPoint.complexDistance(centroid);
 
 				// Check if the distance is less than the minimum distance found so far

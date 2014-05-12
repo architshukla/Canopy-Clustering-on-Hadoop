@@ -2,8 +2,11 @@
 # Variables #
 #############
 
+# Prefix for all packages
+PKGPREFIX=$(shell grep 'PKGPREFIX' cc.properties | awk '{ print $$3 }')
+
 # Prefix for source code folders
-SRCPREFIX=$(shell grep 'SRCPREFIX' cc.properties | awk '{ print $$3 }')
+SRCPREFIX=$(shell grep 'SRCPREFIX' cc.properties | awk '{ print $$3 }')/$(PKGPREFIX)
 
 # Folders
 SRC=src
@@ -35,66 +38,66 @@ HADOOPCOREJAR=hadoop-core-*.jar
 # Build all steps
 all: step1 step2 step3 step4
 	mkdir -p $(BIN)
-	mkdir -p $(BIN)/$(DIR1)/
-	mkdir -p $(BIN)/$(DIR2)/
-	mkdir -p $(BIN)/$(DIR3)/
-	mkdir -p $(BIN)/$(DIR4)/
-	mkdir -p $(BIN)/$(DATAPOINTDIR)/
-	mv $(SRCPREFIX)/$(DIR1)/*.class $(BIN)/$(DIR1)/
-	mv $(SRCPREFIX)/$(DIR2)/*.class $(BIN)/$(DIR2)/
-	mv $(SRCPREFIX)/$(DIR3)/*.class $(BIN)/$(DIR3)/
-	mv $(SRCPREFIX)/$(DIR4)/*.class $(BIN)/$(DIR4)/
-	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(DATAPOINTDIR)/
+	mkdir -p $(BIN)/$(PKGPREFIX)/$(DIR1)/
+	mkdir -p $(BIN)/$(PKGPREFIX)/$(DIR2)/
+	mkdir -p $(BIN)/$(PKGPREFIX)/$(DIR3)/
+	mkdir -p $(BIN)/$(PKGPREFIX)/$(DIR4)/
+	mkdir -p $(BIN)/$(PKGPREFIX)/$(DATAPOINTDIR)/
+	mv $(SRCPREFIX)/$(DIR1)/*.class $(BIN)/$(PKGPREFIX)/$(DIR1)/
+	mv $(SRCPREFIX)/$(DIR2)/*.class $(BIN)/$(PKGPREFIX)/$(DIR2)/
+	mv $(SRCPREFIX)/$(DIR3)/*.class $(BIN)/$(PKGPREFIX)/$(DIR3)/
+	mv $(SRCPREFIX)/$(DIR4)/*.class $(BIN)/$(PKGPREFIX)/$(DIR4)/
+	mv $(SRCPREFIX)/$(DATAPOINTDIR)/*.class $(BIN)/$(PKGPREFIX)/$(DATAPOINTDIR)/
 	jar -cvf $(OUTPUTJARNAME) -C $(BIN) .
 	mkdir -p $(DIST)
 	mv $(OUTPUTJARNAME) $(DIST)
 
 # Compile step 1 files
-step1:	$(SRCPREFIX)/$(DIR1)/$(DIR1)Driver.java \
-		$(SRCPREFIX)/$(DIR1)/$(DIR1)Mapper.java \
-		$(SRCPREFIX)/$(DIR1)/$(DIR1)Reducer.java \
+step1:	$(SRCPREFIX)/$(DIR1)/CanopyCenterDriver.java \
+		$(SRCPREFIX)/$(DIR1)/CanopyCenterMapper.java \
+		$(SRCPREFIX)/$(DIR1)/CanopyCenterReducer.java \
 		$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 	
 	javac -classpath $(HADOOP_HOME)/$(HADOOPCOREJAR) \
-	$(SRCPREFIX)/$(DIR1)/$(DIR1)Driver.java \
-	$(SRCPREFIX)/$(DIR1)/$(DIR1)Mapper.java \
-	$(SRCPREFIX)/$(DIR1)/$(DIR1)Reducer.java \
+	$(SRCPREFIX)/$(DIR1)/CanopyCenterDriver.java \
+	$(SRCPREFIX)/$(DIR1)/CanopyCenterMapper.java \
+	$(SRCPREFIX)/$(DIR1)/CanopyCenterReducer.java \
 	$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 # Compile step 2 files
-step2:	$(SRCPREFIX)/$(DIR2)/$(DIR2)Driver.java \
-		$(SRCPREFIX)/$(DIR2)/$(DIR2)Mapper.java \
-		$(SRCPREFIX)/$(DIR2)/$(DIR2)Reducer.java \
+step2:	$(SRCPREFIX)/$(DIR2)/CanopyAssignDriver.java \
+		$(SRCPREFIX)/$(DIR2)/CanopyAssignMapper.java \
+		$(SRCPREFIX)/$(DIR2)/CanopyAssignReducer.java \
 		$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 	javac -classpath $(HADOOP_HOME)/$(HADOOPCOREJAR) \
-	$(SRCPREFIX)/$(DIR2)/$(DIR2)Driver.java \
-	$(SRCPREFIX)/$(DIR2)/$(DIR2)Mapper.java \
-	$(SRCPREFIX)/$(DIR2)/$(DIR2)Reducer.java \
+	$(SRCPREFIX)/$(DIR2)/CanopyAssignDriver.java \
+	$(SRCPREFIX)/$(DIR2)/CanopyAssignMapper.java \
+	$(SRCPREFIX)/$(DIR2)/CanopyAssignReducer.java \
 	$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 # Compile step 3 files
-step3:	$(SRCPREFIX)/$(DIR3)/$(DIR3)Driver.java \
-		$(SRCPREFIX)/$(DIR3)/$(DIR3)Mapper.java \
-		$(SRCPREFIX)/$(DIR3)/$(DIR3)Reducer.java \
+step3:	$(SRCPREFIX)/$(DIR3)/ClusterCenterDriver.java \
+		$(SRCPREFIX)/$(DIR3)/ClusterCenterMapper.java \
+		$(SRCPREFIX)/$(DIR3)/ClusterCenterReducer.java \
 		$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 	javac -classpath $(HADOOP_HOME)/$(HADOOPCOREJAR) \
-	$(SRCPREFIX)/$(DIR3)/$(DIR3)Driver.java \
-	$(SRCPREFIX)/$(DIR3)/$(DIR3)Mapper.java \
-	$(SRCPREFIX)/$(DIR3)/$(DIR3)Reducer.java \
+	$(SRCPREFIX)/$(DIR3)/ClusterCenterDriver.java \
+	$(SRCPREFIX)/$(DIR3)/ClusterCenterMapper.java \
+	$(SRCPREFIX)/$(DIR3)/ClusterCenterReducer.java \
 	$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 # Compile step 4 files
-step4:	$(SRCPREFIX)/$(DIR4)/$(DIR4)Driver.java \
-		$(SRCPREFIX)/$(DIR4)/$(DIR4)Mapper.java \
-		$(SRCPREFIX)/$(DIR4)/$(DIR4)Reducer.java \
+step4:	$(SRCPREFIX)/$(DIR4)/ClusterAssignDriver.java \
+		$(SRCPREFIX)/$(DIR4)/ClusterAssignMapper.java \
+		$(SRCPREFIX)/$(DIR4)/ClusterAssignReducer.java \
 		$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 	javac -classpath $(HADOOP_HOME)/$(HADOOPCOREJAR) \
-	$(SRCPREFIX)/$(DIR4)/$(DIR4)Driver.java \
-	$(SRCPREFIX)/$(DIR4)/$(DIR4)Mapper.java \
-	$(SRCPREFIX)/$(DIR4)/$(DIR4)Reducer.java \
+	$(SRCPREFIX)/$(DIR4)/ClusterAssignDriver.java \
+	$(SRCPREFIX)/$(DIR4)/ClusterAssignMapper.java \
+	$(SRCPREFIX)/$(DIR4)/ClusterAssignReducer.java \
 	$(SRCPREFIX)/$(DATAPOINTDIR)/$(DATAPOINTCLASS)
 
 

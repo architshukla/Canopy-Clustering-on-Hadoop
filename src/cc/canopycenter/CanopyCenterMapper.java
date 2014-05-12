@@ -1,4 +1,4 @@
-package CanopyCenter;
+package cc.canopycenter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,18 +8,18 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Mapper class for the Canopy Center finding step.
   */
 public class CanopyCenterMapper
-	extends Mapper<LongWritable, Text, IntWritable, TemperatureDataPoint>
+	extends Mapper<LongWritable, Text, IntWritable, DataPoint>
 {
 	/**
 	  * ArrayList containing the Canopy Centers found so far.
 	  */
-	public static ArrayList<TemperatureDataPoint> canopyCenters;
+	public static ArrayList<DataPoint> canopyCenters;
 	
 	/**
 	  * <b>Overridden setup method of Mapper class. </b><br>
@@ -36,7 +36,7 @@ public class CanopyCenterMapper
 		super.setup(context);
 
 		// Allocate memory for the canopyCenters ArrayList
-		canopyCenters = new ArrayList<TemperatureDataPoint>();
+		canopyCenters = new ArrayList<DataPoint>();
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class CanopyCenterMapper
 		throws IOException, InterruptedException
 	{
 		// Create a new Data Point object for the parameter named value
-		TemperatureDataPoint dataPoint = new TemperatureDataPoint(value.toString());
+		DataPoint dataPoint = new DataPoint(value.toString());
 		
 		// If canopyCenters is empty
 		if(canopyCenters.size() == 0)
@@ -73,7 +73,7 @@ public class CanopyCenterMapper
 			boolean insert = true;
 
 			// Iterate through all Canopy Centers found so far
-			for(TemperatureDataPoint center : canopyCenters)
+			for(DataPoint center : canopyCenters)
 			{
 				// If any Canopy Center is within T2 distnace of this Data Point
 				if(dataPoint.withinT2(center))

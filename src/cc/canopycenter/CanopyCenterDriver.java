@@ -3,7 +3,7 @@
   * @version 1.0
   * Package to compute Canopy Centers for a gievn Data Set.
   */
-package CanopyCenter;
+package cc.canopycenter;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Driver class for the package. Initializes the MapReduce job to find Canopy Centers.
@@ -52,7 +52,7 @@ public class CanopyCenterDriver
 
 		// Set the class for the output key and value types of the Reducer
 		job.setOutputKeyClass(IntWritable.class);
-		job.setOutputValueClass(TemperatureDataPoint.class);
+		job.setOutputValueClass(DataPoint.class);
 
 		// Set the class for the output key and value types of the Mapper
 		job.setMapperClass(CanopyCenterMapper.class);

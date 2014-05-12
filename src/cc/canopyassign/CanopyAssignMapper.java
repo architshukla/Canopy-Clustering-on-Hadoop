@@ -1,4 +1,4 @@
-package CanopyAssign;
+package cc.canopyassign;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,24 +12,23 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Mapper class for the Canopy Assign step.
   */
-public class CanopyAssignMapper extends Mapper<LongWritable, Text, TemperatureDataPoint, TemperatureDataPoint>
+public class CanopyAssignMapper extends Mapper<LongWritable, Text, DataPoint, DataPoint>
 {
 	/**
 	  * ArrayList holding the Canopy Centers read from a file.
 	  */
-	public static ArrayList<TemperatureDataPoint> canopyCenters;
+	public static ArrayList<DataPoint> canopyCenters;
 
 	/**
-	  * <b>Overridden setup method of Mapper class. </b><br>
-	  * <b>Parameters:</b>	Context context <br>
-	  * <b>Returns:</b>		Nothing <br><br>
-	  * 
+	  * Overridden setup method of Mapper class.
 	  * Reads the file containing canopy centers, parses it and loads the Canopy Centers into the ArrayList canopyCenters.
+	  *
+	  * @param context Context object.
 	  */
 	@Override
 	public void setup(Context context)
@@ -39,7 +38,7 @@ public class CanopyAssignMapper extends Mapper<LongWritable, Text, TemperatureDa
 		super.setup(context);
 
 		// Allocate memory for canopyCenters
-		canopyCenters = new ArrayList<TemperatureDataPoint>();
+		canopyCenters = new ArrayList<DataPoint>();
 
 		// Get the context's configuration
 		Configuration configuration = context.getConfiguration();
@@ -52,34 +51,33 @@ public class CanopyAssignMapper extends Mapper<LongWritable, Text, TemperatureDa
 		String line = reader.readLine();
 		while(line != null)
 		{
-			// The first character is 1, the second is \t, All the other characters are parsed to an object of TemperatureDataPoint
-			TemperatureDataPoint canopyCenter =  new TemperatureDataPoint(line.substring(2));
+			// The first character is 1, the second is \t, All the other characters are parsed to an object of DataPoint
+			DataPoint canopyCenter =  new DataPoint(line.substring(2));
 			canopyCenters.add(canopyCenter);
 			line = reader.readLine();
 		}
 	}
 
 	/**
-	  * <b>Overridden map function of Mapper Class. </b><br>
-	  * <b>Parameters:</b>	LongWritable key, an offset in the file. <br>
-	  * 			Text value, Data Points in a string format.
-	  *				Context context. <br>
-	  * <b>Returns:</b>	(key, value) pairs where, 
-	  *				key is a Canopy Center associated with the current Data Point, 
-	  *				value is the Data Point being considered. <br><br>
-	  * 
+	  * Overridden map function of Mapper Class.
 	  * The function receives a (key, value) pair, parses it and checks if any Canopy Center is within T1 distance of this Data Point.
-	  * For every such point, it outputs the pair (Canopy Center, Data Point).
+	  * For every such point, it outputs (key, value) pairs where, 
+	  *	key is a Canopy Center associated with the current Data Point, 
+	  *	value is the Data Point being considered.
+	  *
+	  * @param key An offset in the input file.
+	  * @param value DataPoint objects in a string format.
+	  *	@param context Context object.
 	  */
 	@Override 
 	public void map(LongWritable key, Text value, Context context)
 		throws IOException, InterruptedException
 	{
 		// Convert the value to an object of Data Point
-		TemperatureDataPoint dataPoint = new TemperatureDataPoint(value.toString());
+		DataPoint dataPoint = new DataPoint(value.toString());
 
 		// For each Canopy Center, check if it is within T1 distance of Canopy Center
-		for(TemperatureDataPoint canopyCenter : canopyCenters)
+		for(DataPoint canopyCenter : canopyCenters)
 		{
 			// If the Data Point and a Canopy Center are within T1 distance of each other, write the pair (Canopy Center, Data Point)
 			if(dataPoint.withinT1(canopyCenter))

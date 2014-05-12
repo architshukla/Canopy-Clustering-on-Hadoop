@@ -3,7 +3,7 @@
   * @version 1.0
   * Package to assign Data Points to Canopy Centers
   */
-package CanopyAssign;
+package cc.canopyassign;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.conf.Configuration;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Driver class for the package. Initializes the MapReduce job to assign Data Points to Canopy Centers.
@@ -21,14 +21,12 @@ import DataPoint.TemperatureDataPoint;
 public class CanopyAssignDriver
 {
 	/**
-	  * <b>Main function of CanopyAssignDriver. </b><br>
-	  * <b>Parameters:</b>	Strings args[], arguments passed to this class.
-	  * 					args[0] = Path to file containing the input.
-	  * 					args[1] = Path to file containing the Canopy Centers.
-	  * 					args[2] = Path to output file. <br>
-	  * <b>Returns:</b>		Nothing <br><br>
+	  * Main function of CanopyAssignDriver. Initializes and runs the job to find Canopy Centers.
 	  *
-	  * Initializes and runs the job to find Canopy Centers.
+	  * @param args Arguments passed to this class.
+	  * args[0] = Path to file containing the input.
+	  * args[1] = Path to file containing the Canopy Centers.
+	  * args[2] = Path to output file. <br>
 	  */
 	public static void main(String[] args)
 		throws Exception
@@ -61,8 +59,8 @@ public class CanopyAssignDriver
 		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
 		// Specify the class types of the key and value produced by the mapper and reducer
-		job.setOutputKeyClass(TemperatureDataPoint.class);
-		job.setOutputValueClass(TemperatureDataPoint.class);
+		job.setOutputKeyClass(DataPoint.class);
+		job.setOutputValueClass(DataPoint.class);
 
 		System.exit(job.waitForCompletion(true)?0:1);
 	}

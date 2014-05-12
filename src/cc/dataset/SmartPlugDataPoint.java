@@ -2,7 +2,7 @@
   * @author Archit Shukla
   * @version 1.0
   */
-package DataPoint;
+package cc.dataset;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -16,14 +16,15 @@ import org.apache.hadoop.io.WritableComparable;
 public class TemperatureDataPoint implements WritableComparable<TemperatureDataPoint>
 {
 	/**
-	  * Attributes for the class: year and temperature.
+	  * Attributes for the class.
 	  */
-	public int year, temperature;
+	public float time, reading;
+	int id1, id2, id3, id4;
 
 	/**
 	  * T1 and T2 thresholds for this Data Set.
 	  */
-	public final static double T1 = 10, T2 = 6;
+	public final static double T1 = 5, T2 = 3;
 	/**
 	  * Threshold for convergence. A distance value below the specified value denotes the point has converged.
 	  */
@@ -43,7 +44,8 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public TemperatureDataPoint()
 	{
-		year = temperature = 0;
+		time = reading = 0.0f;
+		id1 = id2 = id3 = id4 = 0;
 	}
 
 	/**
@@ -55,9 +57,17 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public TemperatureDataPoint(String dataPointString)
 	{
-		int commaPosition = dataPointString.indexOf(",");
-		year = Integer.parseInt(dataPointString.substring(0, commaPosition));
-		temperature = Integer.parseInt(dataPointString.substring(commaPosition + 1));
+		int commaPosition1 = dataPointString.indexOf(",");
+		time = Float.parseFloat(dataPointString.substring(0, commaPosition1));
+		int commaPosition2 = dataPointString.indexOf(",", commaPosition1 + 1);
+		reading = Float.parseFloat(dataPointString.substring(commaPosition1 + 1, commaPosition2));
+		int commaPosition3 = dataPointString.indexOf(",", commaPosition2 + 1);
+		id1 = Integer.parseInt(dataPointString.substring(commaPosition2 + 1, commaPosition3));
+		int commaPosition4 = dataPointString.indexOf(",", commaPosition3 + 1);
+		id2 = Integer.parseInt(dataPointString.substring(commaPosition3 + 1, commaPosition4));
+		int commaPosition5 = dataPointString.indexOf(",", commaPosition4 + 1);
+		id3 = Integer.parseInt(dataPointString.substring(commaPosition4 + 1, commaPosition5));
+		id4 = Integer.parseInt(dataPointString.substring(commaPosition5 + 1));
 	}
 
 	/**
@@ -69,8 +79,12 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public TemperatureDataPoint(TemperatureDataPoint dataPoint)
 	{
-		year = dataPoint.year;
-		temperature = dataPoint.temperature;
+		time = dataPoint.time;
+		reading = dataPoint.reading;
+		id1 = dataPoint.id1;
+		id2 = dataPoint.id2;
+		id3 = dataPoint.id3;
+		id4 = dataPoint.id4;
 	}
 
 	/**
@@ -83,8 +97,12 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	public void write(DataOutput out)
 		throws IOException
 	{
-		out.writeInt(year);
-		out.writeInt(temperature);
+		out.writeFloat(time);
+		out.writeFloat(reading);
+		out.writeInt(id1);
+		out.writeInt(id2);
+		out.writeInt(id3);
+		out.writeInt(id4);
 	}
 
 	/**
@@ -97,8 +115,12 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	public void readFields(DataInput in)
 		throws IOException
 	{
-		year = in.readInt();
-		temperature = in.readInt();
+		time = in.readFloat();
+		reading = in.readFloat();
+		id1 = in.readInt();
+		id2 = in.readInt();
+		id3 = in.readInt();
+		id4 = in.readInt();
 	}
 
 	/**
@@ -126,8 +148,8 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public int compareTo(TemperatureDataPoint dataPoint)
 	{
-		return (temperature < dataPoint.temperature ? -1 : 
-			(temperature == dataPoint.temperature ? (year < dataPoint.year ? -1 : (year == dataPoint.year ? 0 : 1)) : 1));
+		return (time < dataPoint.time ? -1 : 
+			(time == dataPoint.time ? (reading < dataPoint.reading ? -1 : (reading == dataPoint.reading ? 0 : 1)) : 1));
 	}
 
 	/**
@@ -168,7 +190,7 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public int simpleDistance(TemperatureDataPoint dataPoint)
 	{
-		return Math.abs(temperature - dataPoint.temperature);
+		return Math.abs((int)Math.floor((time - dataPoint.time) * 10));
 	}
 
 	/**
@@ -181,8 +203,8 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public double complexDistance(TemperatureDataPoint dataPoint)
 	{
-		return Math.sqrt(Math.abs((year - dataPoint.year) * (year - dataPoint.year) 
-				+ (temperature - dataPoint.temperature) * (temperature - dataPoint.temperature)));
+		return Math.sqrt(Math.abs((time - dataPoint.time) * (time - dataPoint.time) 
+				+ (reading - dataPoint.reading) * (reading - dataPoint.reading)));
 	}
 
 	/**
@@ -194,7 +216,7 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public String toString()
 	{
-		return year + "," + temperature;
+		return time + "," + reading + "," + id1 + "," + id2 + "," + id3 + "," + id4;
 	}
 
 	/**
@@ -211,7 +233,8 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 		if(object == null)
 			return false;
 		TemperatureDataPoint dataPoint = (TemperatureDataPoint) object;
-		if(year ==  dataPoint.year && temperature == dataPoint.temperature)
+		if(time ==  dataPoint.time && reading == dataPoint.reading 
+			&& id1 == dataPoint.id1  && id2 == dataPoint.id2  && id3 == dataPoint.id3  && id4 == dataPoint.id4)
 			return true;
 		return false;
 	}
@@ -226,7 +249,7 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	@Override
 	public int hashCode()
 	{
-		return (17 * year + 31 * temperature);
+		return (17 * (int)time + 31 * (int)reading);
 	}
 
 	/**
@@ -239,18 +262,18 @@ public class TemperatureDataPoint implements WritableComparable<TemperatureDataP
 	  */
 	public static TemperatureDataPoint getAverageDataPoint(Iterable<TemperatureDataPoint> dataPoints)
 	{
-		double yearSum = 0;
-		double temperatureSum = 0;
+		float timeSum = 0;
+		float readingSum = 0;
 		long count = 0;
 		for(TemperatureDataPoint dataPoint: dataPoints)
 		{
-			yearSum += dataPoint.year;
-			temperatureSum += dataPoint.temperature;
+			timeSum += dataPoint.time;
+			readingSum += dataPoint.reading;
 			count++;
 		}
 		TemperatureDataPoint averageDataPoint =  new TemperatureDataPoint();
-		averageDataPoint.year = (int) (yearSum/count);
-		averageDataPoint.temperature = (int) (temperatureSum/count);
+		averageDataPoint.time = (timeSum/count);
+		averageDataPoint.reading = (readingSum/count);
 		return averageDataPoint;
 	}
 }

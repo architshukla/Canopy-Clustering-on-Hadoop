@@ -3,7 +3,7 @@
   * @version 1.0
   * Package to assign Data Points to k-Means Centroids
   */
-package ClusterAssign;
+package cc.clusterassign;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.conf.Configuration;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Driver class for the package. Initializes the MapReduce job to assign Data Points to k-Means Centroids.
@@ -51,8 +51,8 @@ public class ClusterAssignDriver
 		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
 		// Specify the class types of the key and value produced by the mapper and reducer
-		job.setOutputKeyClass(TemperatureDataPoint.class);
-		job.setOutputValueClass(TemperatureDataPoint.class);
+		job.setOutputKeyClass(DataPoint.class);
+		job.setOutputValueClass(DataPoint.class);
 
 		System.exit(job.waitForCompletion(true)?0:1);
 	}

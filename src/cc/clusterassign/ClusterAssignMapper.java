@@ -1,4 +1,4 @@
-package ClusterAssign;
+package cc.clusterassign;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -12,17 +12,17 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.Configuration;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Mapper class for the Clluster Assign step
   */
-public class ClusterAssignMapper extends Mapper<LongWritable, Text, TemperatureDataPoint, TemperatureDataPoint>
+public class ClusterAssignMapper extends Mapper<LongWritable, Text, DataPoint, DataPoint>
 {
 	/**
 	  * ArrayList holding the k-Means Centroids read from a file
 	  */
-	public static ArrayList<TemperatureDataPoint> kCentroids;
+	public static ArrayList<DataPoint> kCentroids;
 
 	/**
 	  * Overridden setup method of Mapper class
@@ -39,7 +39,7 @@ public class ClusterAssignMapper extends Mapper<LongWritable, Text, TemperatureD
 		super.setup(context);
 
 		// Allocate memory for kCentroids
-		kCentroids = new ArrayList<TemperatureDataPoint>();
+		kCentroids = new ArrayList<DataPoint>();
 
 		// Get the context's configuration
 		Configuration configuration = context.getConfiguration();
@@ -52,8 +52,8 @@ public class ClusterAssignMapper extends Mapper<LongWritable, Text, TemperatureD
 		String line = reader.readLine();
 		while(line != null)
 		{
-			// The first character is 1, the second is \t, All the other characters are parsed to an object of TemperatureDataPoint
-			TemperatureDataPoint centroid =  new TemperatureDataPoint(line.substring(2));
+			// The first character is 1, the second is \t, All the other characters are parsed to an object of DataPoint
+			DataPoint centroid =  new DataPoint(line.substring(2));
 			kCentroids.add(centroid);
 			line = reader.readLine();
 		}
@@ -77,7 +77,7 @@ public class ClusterAssignMapper extends Mapper<LongWritable, Text, TemperatureD
 		throws IOException, InterruptedException
 	{
 		// Parse the Data Point
-		TemperatureDataPoint dataPoint = new TemperatureDataPoint(value.toString());
+		DataPoint dataPoint = new DataPoint(value.toString());
 
 		// Set up variables to find the centroid with minimum distance
 		double minDistance = Double.MAX_VALUE;

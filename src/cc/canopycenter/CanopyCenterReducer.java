@@ -1,4 +1,4 @@
-package CanopyCenter;
+package cc.canopycenter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,17 +8,17 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import DataPoint.TemperatureDataPoint;
+import cc.dataset.DataPoint;
 
 /**
   * Reducer class for the Canopy Center finding step.
   */
-public class CanopyCenterReducer extends Reducer<IntWritable, TemperatureDataPoint, IntWritable, TemperatureDataPoint>
+public class CanopyCenterReducer extends Reducer<IntWritable, DataPoint, IntWritable, DataPoint>
 {
 	/**
 	  * ArrayList containing the Canopy Centers found so far.
 	  */
-	public static ArrayList<TemperatureDataPoint> canopyCenters;
+	public static ArrayList<DataPoint> canopyCenters;
 
 	/**
 	  * <b>Overridden setup method of Reducer class. </b><br>
@@ -32,13 +32,13 @@ public class CanopyCenterReducer extends Reducer<IntWritable, TemperatureDataPoi
 		throws IOException, InterruptedException
 	{
 		super.setup(context);
-		canopyCenters = new ArrayList<TemperatureDataPoint>();
+		canopyCenters = new ArrayList<DataPoint>();
 	}
 
 	/**
 	  * <b>Overridden reduce method of the Reduce class. </b><br>
 	  * <b>Parameters:</b>	IntWritable key, IntWritable with value 1.
-	  * 					Iterable<TemperatureDataPoint> value, A list of all Canopy Centers.
+	  * 					Iterable<DataPoint> value, A list of all Canopy Centers.
 	  *						Context context. <br>
 	  * <b>Returns:</b>	(key, value) pairs where, 
 	  *					key is an IntWritable with value 1, 
@@ -51,21 +51,21 @@ public class CanopyCenterReducer extends Reducer<IntWritable, TemperatureDataPoi
 	  * It outputs the pair (1, New Cluster Centroid, that is Average of all Data Points)
 	  */
 	@Override
-	public void reduce(IntWritable key, Iterable<TemperatureDataPoint> values, Context context)
+	public void reduce(IntWritable key, Iterable<DataPoint> values, Context context)
 		throws IOException, InterruptedException
 	{
 
-		for(TemperatureDataPoint dataPoint : values)
+		for(DataPoint dataPoint : values)
 		{
 			if(canopyCenters.size() == 0)
 			{
 				context.write(key, dataPoint);
-				canopyCenters.add(new TemperatureDataPoint(dataPoint));
+				canopyCenters.add(new DataPoint(dataPoint));
 			}
 			else
 			{
 				boolean insert = true;
-				for(TemperatureDataPoint center : canopyCenters)
+				for(DataPoint center : canopyCenters)
 				{
 					if(dataPoint.withinT2(center))
 					{
@@ -76,7 +76,7 @@ public class CanopyCenterReducer extends Reducer<IntWritable, TemperatureDataPoi
 				if(insert)
 				{
 					context.write(key, dataPoint);
-					canopyCenters.add(new TemperatureDataPoint(dataPoint));
+					canopyCenters.add(new DataPoint(dataPoint));
 				}
 			}
 		}
